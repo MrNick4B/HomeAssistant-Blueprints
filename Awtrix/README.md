@@ -1,14 +1,15 @@
 # Home Assistant Blueprints for Awtrix 3
-This repository contains my custom blueprints for Awtrix 3 for Home Assistant.
+This repository contains my Awtrix 3 blueprints for Home Assistant.
+Feel free to use them in your Home Assistant instance!
 
 ## Available Blueprints
 
-- **Awtrix 3 App Blueprint**: Publish an app to Awtrix 3 via MQTT.
-- More blueprints will be added over time.
+- **App Blueprint**: Publish an app to Awtrix 3 via MQTT.
+- **Notification Blueprint**: Publish an app to Awtrix 3 via MQTT.
 
 ## How to Use
 
 1. Open Home Assistant.
-2. Navigate to **Settings** > **Automations & Scenes** > **Blueprints**.
+2. Navigate to **Settings** > **Automations & scenes** > **Blueprints**.
 3. Click **Import Blueprint** and enter the URL of the blueprint you want to use.
-4. Configure the blueprint according to your needs.
+4. Create an automation from the blueprint and configure it according to your needs.
