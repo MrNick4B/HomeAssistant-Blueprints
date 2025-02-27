@@ -3,7 +3,7 @@ This repository contains my Awtrix 3 blueprints for Home Assistant.
 Feel free to use them in your Home Assistant instance!
 
 ## Available Blueprints
-
+The blueprints are available in both English and Dutch (for as long as I feel like doing that 😬).
 - **App Blueprint**: Publish an app to Awtrix 3 via MQTT.
 - **Notification Blueprint**: Publish an app to Awtrix 3 via MQTT.
 
