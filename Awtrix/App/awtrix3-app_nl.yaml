@@ -4,7 +4,7 @@ blueprint:
   domain: automation
   author: "MrNick4B"
   homeassistant:
-    min_version: "2024.6.0"
+    min_version: "2025.7.0"
   source_url: "https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/App/awtrix3-app_nl.yaml"
   input:
     section_general:
@@ -66,7 +66,7 @@ blueprint:
         input_text_entities:
           name: "Entiteiten"
           description: "Kies een of meerdere entiteiten waarvan de status weergegeven wordt."
-          default: null
+          default: ""
           selector:
             entity:
               multiple: true

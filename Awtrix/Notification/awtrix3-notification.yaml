@@ -4,8 +4,8 @@ blueprint:
   domain: automation
   author: "MrNick4B"
   homeassistant:
-    min_version: "2024.6.0"
-  source_url: "https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/Notification/awtrix3-notification_nl.yaml"
+    min_version: "2025.7.0"
+  source_url: "https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/Notification/awtrix3-notification.yaml"
   input:
     section_general:
       name: "General Settings"
@@ -61,7 +61,7 @@ blueprint:
         input_text_entities:
           name: "Entities"
           description: "Select one or more entities whose status will be displayed."
-          default: null
+          default: ""
           selector:
             entity:
               multiple: true

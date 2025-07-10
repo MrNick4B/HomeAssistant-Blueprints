@@ -2,14 +2,14 @@
 This repository contains my Awtrix 3 blueprints for Home Assistant.
 Feel free to use them in your Home Assistant instance!
 
-Requires Home Assistant 2024.6.0 or later.
+Requires Home Assistant 2025.7.0 (previously 2024.6.0) or later because of a change in the entity selector behavior.
 
 ### App Blueprint
 Publish an app to Awtrix 3 via MQTT.
 
 **English Download**
 
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/App/awtrix3-app_en.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/App/awtrix3-app.yaml)
 
 **Dutch Download**
 
@@ -20,7 +20,7 @@ Publish a notification to Awtrix 3 via MQTT.
 
 **English Download**
 
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/Notification/awtrix3-notification_en.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/Awtrix/Notification/awtrix3-notification.yaml)
 
 **Dutch Download**
 
