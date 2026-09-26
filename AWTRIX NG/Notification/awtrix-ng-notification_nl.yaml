@@ -280,7 +280,7 @@ blueprint:
               step: any
         input_progress:
           name: "Voortgangstemplate"
-          description: "Voor gevorderden: een template dat een waarde tussen 0 en 100 teruggeeft. Gaat voor op de voortgangsentiteit."
+          description: "Gebruik een template dat een waarde tussen 0 en 100 teruggeeft. Gaat voor op de voortgangsentiteit."
           default: null
           selector:
             template:

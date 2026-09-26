@@ -285,7 +285,7 @@ blueprint:
               step: any
         input_progress:
           name: "Progress Template"
-          description: "For advanced use: a template that returns a value between 0 and 100. Overrides the progress entity."
+          description: "Use a template that returns a value between 0 and 100. Overrides the progress entity."
           default: null
           selector:
             template:
