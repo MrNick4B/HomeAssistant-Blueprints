@@ -257,9 +257,35 @@ blueprint:
       description: "Toon een voortgangsbalk op de onderste rij."
       collapsed: true
       input:
+        input_progress_entity:
+          name: "Voortgangsentiteit"
+          description: "Entiteit waarvan de status als voortgang getoond wordt, bijvoorbeeld een batterijniveau."
+          default: ""
+          selector:
+            entity:
+              domain:
+                - sensor
+                - number
+                - input_number
+        input_progress_max:
+          name: "Maximum"
+          description: "Waarde waarbij de voortgangsbalk vol is. Alleen nodig voor sensoren die geen percentage geven, bijvoorbeeld 200 voor een regenton van 200 L.\n0 = automatisch."
+          default: 0
+          selector:
+            number:
+              mode: box
+              step: any
+        input_progress_min:
+          name: "Minimum"
+          description: "Waarde waarbij de voortgangsbalk leeg is. Wordt alleen gebruikt als er een maximum ingesteld is."
+          default: 0
+          selector:
+            number:
+              mode: box
+              step: any
         input_progress:
-          name: "Voortgang"
-          description: "Een waarde tussen 0 en 100. Ondersteunt ook templates, bijvoorbeeld de status van een sensor.\nLaat leeg om de voortgangsbalk te verbergen."
+          name: "Voortgangstemplate"
+          description: "Gebruik een template dat een waarde tussen 0 en 100 teruggeeft. Gaat voor op de voortgangsentiteit."
           default: null
           selector:
             template:
@@ -433,6 +459,9 @@ action:
       var_enable_background_color: !input input_enable_background_color
       var_background_color: !input input_background_color
       var_progress: !input input_progress
+      var_progress_entity: !input input_progress_entity
+      var_progress_min: !input input_progress_min
+      var_progress_max: !input input_progress_max
       var_progress_color: !input input_progress_color
       var_progress_track_color: !input input_progress_track_color
       var_overlayeffect: !input input_overlayeffect
@@ -505,9 +534,29 @@ action:
         {%- if var_enable_background_color -%}
           {%- set p = dict(p, backgroundColor=var_background_color) -%}
         {%- endif -%}
+        {#- The template overrides the entity. The entity is scaled to a percentage using the
+            manual maximum, the min/max attributes of number helpers, or 0-100. -#}
+        {%- set pr = namespace(value=none) -%}
         {%- set progress = '' if var_progress is none else (var_progress | string | trim) -%}
         {%- if progress | is_number -%}
-          {%- set p = dict(p, progress=[[progress | float | round(0) | int, 0] | max, 100] | min, progressColor=var_progress_color, progressTrackColor=var_progress_track_color) -%}
+          {%- set pr.value = progress | float -%}
+        {%- elif var_progress_entity and states(var_progress_entity) | is_number -%}
+          {%- if (var_progress_max | float(0)) != 0 -%}
+            {%- set range_min = var_progress_min | float(0) -%}
+            {%- set range_max = var_progress_max | float -%}
+          {%- elif var_progress_entity.split('.')[0] in ['number', 'input_number'] -%}
+            {%- set range_min = state_attr(var_progress_entity, 'min') | float(0) -%}
+            {%- set range_max = state_attr(var_progress_entity, 'max') | float(100) -%}
+          {%- else -%}
+            {%- set range_min = 0 -%}
+            {%- set range_max = 100 -%}
+          {%- endif -%}
+          {%- if range_max != range_min -%}
+            {%- set pr.value = (states(var_progress_entity) | float - range_min) / (range_max - range_min) * 100 -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if pr.value is not none -%}
+          {%- set p = dict(p, progress=[[pr.value | round(0) | int, 0] | max, 100] | min, progressColor=var_progress_color, progressTrackColor=var_progress_track_color) -%}
         {%- endif -%}
         {%- if var_icon -%}
           {%- set p = dict(p, icon=var_icon | string, iconMode=var_icon_push) -%}
