@@ -116,7 +116,7 @@ blueprint:
                   value: "asTyped"
         input_blink_text:
           name: "Knipperende tekst"
-          description: "Laat de tekst knipperen. Werkt niet als het regenboogeffect of een gradient is ingeschakeld."
+          description: "Laat de tekst knipperen. Werkt niet als het regenboogeffect, een gradient of een palet is ingeschakeld."
           default: 0
           selector:
             number:
@@ -126,7 +126,7 @@ blueprint:
               unit_of_measurement: "ms"
         input_fade_text:
           name: "Vervagingseffect"
-          description: "Laat de tekst knipperen met een vervagingseffect. Gaat voor op knipperende tekst. Werkt niet als het regenboogeffect of een gradient is ingeschakeld."
+          description: "Laat de tekst knipperen met een vervagingseffect. Gaat voor op knipperende tekst. Werkt niet als het regenboogeffect, een gradient of een palet is ingeschakeld."
           default: 0
           selector:
             number:
@@ -134,6 +134,42 @@ blueprint:
               max: 5000
               step: 100
               unit_of_measurement: "ms"
+        input_scroll_mode:
+          name: "Scrollmodus"
+          description: "Hoe tekst beweegt die niet op het scherm past."
+          default: ""
+          selector:
+            select:
+              options:
+                - label: "Standaardinstelling van het apparaat"
+                  value: ""
+                - label: "Doorscrollen en opnieuw beginnen"
+                  value: "wrap"
+                - label: "Doorlopende lus"
+                  value: "loop"
+                - label: "Heen en weer"
+                  value: "bounce"
+                - label: "Niet scrollen"
+                  value: "static"
+        input_scroll_speed:
+          name: "Scrollsnelheid"
+          description: "Scrollsnelheid als percentage van de normale snelheid.\n0 = standaardsnelheid van het apparaat."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 300
+              step: 10
+              unit_of_measurement: "%"
+        input_repeat:
+          name: "Tekst herhalen"
+          description: "Blijf weergeven tot de scrollende tekst zo vaak over het scherm is gelopen. Als er een duur is ingesteld, wordt minstens zo lang weergegeven.\n0 = uit."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
     section_colors:
       name: "Kleuropties"
       icon: mdi:palette
@@ -153,6 +189,8 @@ blueprint:
                   value: "1"
                 - label: "Gradient"
                   value: "2"
+                - label: "Palet"
+                  value: "3"
         input_text_color_1:
           name: "Eerste tekstkleur"
           description: "Bij een gradient begint de tekst met deze kleur."
@@ -165,6 +203,31 @@ blueprint:
           default: [255, 0, 128]
           selector:
             color_rgb:
+        input_palette:
+          name: "Palet"
+          description: "Palet voor de tekst als Palet als tekstkleur gekozen is. Je kunt ook de naam van een eigen paletbestand invullen. Het palet kleurt ook het achtergrondeffect en de overlay."
+          default: "Rainbow"
+          selector:
+            select:
+              custom_value: true
+              options:
+                - "Rainbow"
+                - "Party"
+                - "Heat"
+                - "Lava"
+                - "Ocean"
+                - "Forest"
+                - "Cloud"
+                - "Stripe"
+        input_palette_speed:
+          name: "Kleurbeweging"
+          description: "Laat de kleuren van een regenboog, gradient of palet over de tekst bewegen, in doorgangen per seconde.\n0 = geen beweging."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 0.1
         input_enable_background_color:
           name: "Aangepaste achtergrondkleur inschakelen"
           description: "Schakel de optie achtergrondkleur in. Wordt genegeerd als er een achtergrondeffect gekozen is."
@@ -183,6 +246,30 @@ blueprint:
           default: false
           selector:
             boolean:
+    section_progress:
+      name: "Voortgangsbalk"
+      icon: mdi:progress-helper
+      description: "Toon een voortgangsbalk op de onderste rij."
+      collapsed: true
+      input:
+        input_progress:
+          name: "Voortgang"
+          description: "Een waarde tussen 0 en 100. Ondersteunt ook templates, bijvoorbeeld de status van een sensor.\nLaat leeg om de voortgangsbalk te verbergen."
+          default: null
+          selector:
+            template:
+        input_progress_color:
+          name: "Voortgangskleur"
+          description: "Kleur van het gevulde deel van de voortgangsbalk."
+          default: [0, 255, 0]
+          selector:
+            color_rgb:
+        input_progress_track_color:
+          name: "Achtergrondkleur balk"
+          description: "Kleur van het niet-gevulde deel van de voortgangsbalk."
+          default: [32, 32, 32]
+          selector:
+            color_rgb:
     section_effects:
       name: "Effecten"
       icon: mdi:animation
@@ -275,6 +362,36 @@ blueprint:
           default: false
           selector:
             boolean:
+    section_dismiss:
+      name: "Vasthouden en wegklikken"
+      icon: mdi:bell-cancel
+      description: "Houd de notificatie in beeld en klik deze automatisch weg."
+      collapsed: true
+      input:
+        input_hold:
+          name: "Notificatie vasthouden"
+          description: "Houd de notificatie in beeld tot deze weggeklikt wordt, ongeacht de duur.\nWegklikken kan met de trigger hieronder of met de middelste knop op het apparaat."
+          default: false
+          selector:
+            boolean:
+        input_notification_name:
+          name: "Notificatienaam"
+          description: "Optionele naam voor de notificatie, waarmee precies deze notificatie weggeklikt wordt. Alleen letters, cijfers, _ en - zijn toegestaan.\nLaat leeg om automatisch een naam te genereren."
+          default: ""
+          selector:
+            text:
+        input_enable_dismiss:
+          name: "Automatisch wegklikken"
+          description: "Klik de notificatie weg zodra de trigger hieronder afgaat, bijvoorbeeld als een deur geopend wordt."
+          default: false
+          selector:
+            boolean:
+        input_dismiss_trigger:
+          name: "Trigger voor wegklikken"
+          description: "Trigger voor het wegklikken van de notificatie. Wordt alleen gebruikt als Automatisch wegklikken ingeschakeld is."
+          default: []
+          selector:
+            trigger:
     section_advanced:
       name: "Geavanceerde instellingen"
       icon: mdi:tune
@@ -287,7 +404,10 @@ blueprint:
           default: false
           selector:
             boolean:
-mode: single
+# Parallel, so a notification that waits for its dismiss trigger does not block new notifications.
+# 32 matches the size of the notification queue on the device.
+mode: parallel
+max: 32
 
 trigger:
   - triggers: !input input_app_update_trigger
@@ -309,17 +429,33 @@ action:
       var_rainbow: !input input_rainbow
       var_blink_text: !input input_blink_text
       var_fade_text: !input input_fade_text
+      var_scroll_mode: !input input_scroll_mode
+      var_scroll_speed: !input input_scroll_speed
+      var_repeat: !input input_repeat
       var_enable_text_color: !input input_enable_text_color
       var_text_color_1: !input input_text_color_1
       var_text_color_2: !input input_text_color_2
+      var_palette: !input input_palette
+      var_palette_speed: !input input_palette_speed
       var_enable_background_color: !input input_enable_background_color
       var_background_color: !input input_background_color
+      var_progress: !input input_progress
+      var_progress_color: !input input_progress_color
+      var_progress_track_color: !input input_progress_track_color
       var_overlayeffect: !input input_overlayeffect
       var_backgroundeffect: !input input_backgroundeffect
       var_rtttl: !input input_rtttl
       var_loopSound: !input input_loopSound
+      var_hold: !input input_hold
+      var_name_input: !input input_notification_name
+      var_enable_dismiss: !input input_enable_dismiss
       var_wakeup: !input input_wakeup
       var_topicnotifyname: "{{ states(var_topic) }}/cmd/notify"
+      # "active" is reserved by AWTRIX NG for the notification currently on screen.
+      var_notification_name: >-
+        {%- set n = (var_name_input | string | trim | regex_replace('[^A-Za-z0-9_-]', '_')) if var_name_input else '' -%}
+        {%- if n == 'active' -%}{%- set n = 'active_' -%}{%- endif -%}
+        {{ n if n else 'ha_' ~ (now().timestamp() * 1000) | int }}
       # Built as a dict and serialized with to_json, so text with quotes stays valid JSON
       # and booleans are sent as true/false (AWTRIX NG skips keys with the wrong JSON type).
       payload_data: >-
@@ -338,11 +474,16 @@ action:
           {%- endfor -%}
         {%- endif -%}
         {%- set text = '' if var_text is none else (var_text | string | trim) -%}
-        {%- set p = {'text': ([text] + ns.result) | select | join(' '), 'textCase': var_text_case, 'stack': var_stack | bool, 'wakeup': var_wakeup | bool} -%}
+        {%- set p = {'text': ([text] + ns.result) | select | join(' '), 'textCase': var_text_case, 'stack': var_stack | bool, 'hold': var_hold | bool, 'wakeup': var_wakeup | bool} -%}
+        {%- if var_name_input or var_enable_dismiss -%}
+          {%- set p = dict(p, name=var_notification_name | string) -%}
+        {%- endif -%}
         {%- if var_rainbow -%}
           {%- set p = dict(p, palette='Rainbow', textColor='palette') -%}
         {%- elif var_enable_text_color == '2' -%}
           {%- set p = dict(p, palette=[var_text_color_1, var_text_color_2], textColor='palette') -%}
+        {%- elif var_enable_text_color == '3' and var_palette -%}
+          {%- set p = dict(p, palette=var_palette | string, textColor='palette') -%}
         {%- else -%}
           {%- if var_enable_text_color == '1' -%}
             {%- set p = dict(p, textColor=var_text_color_1) -%}
@@ -354,8 +495,28 @@ action:
             {%- set p = dict(p, textFadeMs=var_fade_text | int) -%}
           {%- endif -%}
         {%- endif -%}
+        {%- if p.get('textColor') == 'palette' and (var_palette_speed | float(0)) > 0 -%}
+          {%- set p = dict(p, paletteSpeed=var_palette_speed | float) -%}
+        {%- endif -%}
+        {%- set scroll = {} -%}
+        {%- if var_scroll_mode -%}
+          {%- set scroll = dict(scroll, mode=var_scroll_mode) -%}
+        {%- endif -%}
+        {%- if (var_scroll_speed | int) > 0 -%}
+          {%- set scroll = dict(scroll, speed=var_scroll_speed | int) -%}
+        {%- endif -%}
+        {%- if scroll -%}
+          {%- set p = dict(p, scroll=scroll) -%}
+        {%- endif -%}
+        {%- if (var_repeat | int) > 0 -%}
+          {%- set p = dict(p, repeat=var_repeat | int) -%}
+        {%- endif -%}
         {%- if var_enable_background_color -%}
           {%- set p = dict(p, backgroundColor=var_background_color) -%}
+        {%- endif -%}
+        {%- set progress = '' if var_progress is none else (var_progress | string | trim) -%}
+        {%- if progress | is_number -%}
+          {%- set p = dict(p, progress=[[progress | float | round(0) | int, 0] | max, 100] | min, progressColor=var_progress_color, progressTrackColor=var_progress_track_color) -%}
         {%- endif -%}
         {%- if var_icon -%}
           {%- set p = dict(p, icon=var_icon | string, iconMode=var_icon_push) -%}
@@ -378,3 +539,13 @@ action:
     data:
       topic: "{{ var_topicnotifyname }}"
       payload: "{{ payload_data }}"
+
+  - if:
+      - condition: template
+        value_template: "{{ var_enable_dismiss }}"
+    then:
+      - wait_for_trigger: !input input_dismiss_trigger
+      - service: mqtt.publish
+        data:
+          topic: "{{ states(var_topic) }}/cmd/notify/dismiss/{{ var_notification_name }}"
+          payload: ""
