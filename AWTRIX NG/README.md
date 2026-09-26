@@ -2,7 +2,7 @@
 This folder contains my AWTRIX NG blueprints for Home Assistant.
 Feel free to use them in your Home Assistant instance!
 
-Looking for the blueprints for the original AWTRIX 3 firmware? See the [Awtrix](../Awtrix) folder.
+Looking for the blueprints for the older AWTRIX 3 firmware? See the [Awtrix](../Awtrix) folder.
 
 Requires Home Assistant 2025.7.0 or later because of a change in the entity selector behavior.
 
