@@ -375,10 +375,10 @@ blueprint:
                   value: "TwinklingStars"
                 - label: "ColorWaves"
                   value: "ColorWaves"
-    section_advanced:
-      name: "Geavanceerde instellingen"
-      icon: mdi:tune
-      description: "Extra instellingen."
+    section_lifetime:
+      name: "Levensduur en verwijderen"
+      icon: mdi:delete-clock
+      description: "Wanneer de app verloopt of verwijderd wordt."
       collapsed: true
       input:
         input_lifetime:
@@ -404,6 +404,12 @@ blueprint:
           default: false
           selector:
             boolean:
+        input_remove_condition:
+          name: "Verwijder-conditie"
+          description: "Verwijder de app als aan een van de volgende condities wordt voldaan."
+          default: []
+          selector:
+            condition:
 mode: single
 
 trigger_variables:
@@ -449,7 +455,9 @@ condition:
                 id:
                   - awtrix_online
                   - awtrix_entities_unavailable
-          - and: !input input_app_update_condition
+          - or:
+              - or: !input input_remove_condition
+              - and: !input input_app_update_condition
 
 action:
   - variables:
@@ -593,8 +601,10 @@ action:
         {{ p | to_json }}
 
   - if:
-      - condition: template
-        value_template: "{{ var_remove_when_unavailable and var_entities_unavailable }}"
+      - or:
+          - condition: template
+            value_template: "{{ var_remove_when_unavailable and var_entities_unavailable }}"
+          - or: !input input_remove_condition
     then:
       # An empty payload removes the pushed app from the device.
       - service: mqtt.publish
