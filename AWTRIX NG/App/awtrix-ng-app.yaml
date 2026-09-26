@@ -375,7 +375,7 @@ blueprint:
                   value: "TwinklingStars"
                 - label: "ColorWaves"
                   value: "ColorWaves"
-    section_advanced:
+    section_lifetime:
       name: "Lifetime and Removal"
       icon: mdi:delete-clock
       description: "When the app expires or is removed."
