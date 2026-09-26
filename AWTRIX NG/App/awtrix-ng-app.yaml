@@ -121,7 +121,7 @@ blueprint:
                   value: "asTyped"
         input_blink_text:
           name: "Blinking Text"
-          description: "Make the text blink. Does not work if the rainbow effect or a gradient is enabled."
+          description: "Make the text blink. Does not work if the rainbow effect, a gradient or a palette is enabled."
           default: 0
           selector:
             number:
@@ -131,7 +131,7 @@ blueprint:
               unit_of_measurement: "ms"
         input_fade_text:
           name: "Fade Effect"
-          description: "Make the text blink with a fade effect. Takes precedence over blinking text. Does not work if the rainbow effect or a gradient is enabled."
+          description: "Make the text blink with a fade effect. Takes precedence over blinking text. Does not work if the rainbow effect, a gradient or a palette is enabled."
           default: 0
           selector:
             number:
@@ -139,6 +139,42 @@ blueprint:
               max: 5000
               step: 100
               unit_of_measurement: "ms"
+        input_scroll_mode:
+          name: "Scroll Mode"
+          description: "How text that does not fit on the screen moves."
+          default: ""
+          selector:
+            select:
+              options:
+                - label: "Device default setting"
+                  value: ""
+                - label: "Scroll through and start over"
+                  value: "wrap"
+                - label: "Continuous loop"
+                  value: "loop"
+                - label: "Back and forth"
+                  value: "bounce"
+                - label: "Do not scroll"
+                  value: "static"
+        input_scroll_speed:
+          name: "Scroll Speed"
+          description: "Scroll speed as a percentage of the normal speed.\n0 = default speed of the device."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 300
+              step: 10
+              unit_of_measurement: "%"
+        input_repeat:
+          name: "Repeat Text"
+          description: "Keep showing until the scrolling text has run across the screen this many times. When a duration is set, it is shown at least that long.\n0 = off."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
     section_colors:
       name: "Color Options"
       icon: mdi:palette
@@ -158,6 +194,8 @@ blueprint:
                   value: "1"
                 - label: "Gradient"
                   value: "2"
+                - label: "Palette"
+                  value: "3"
         input_text_color_1:
           name: "First Text Color"
           description: "For a gradient, the text starts with this color."
@@ -170,6 +208,31 @@ blueprint:
           default: [255, 0, 128]
           selector:
             color_rgb:
+        input_palette:
+          name: "Palette"
+          description: "Palette for the text when Palette is chosen as text color. You can also enter the name of your own palette file. The palette also colors the background effect and overlay."
+          default: "Rainbow"
+          selector:
+            select:
+              custom_value: true
+              options:
+                - "Rainbow"
+                - "Party"
+                - "Heat"
+                - "Lava"
+                - "Ocean"
+                - "Forest"
+                - "Cloud"
+                - "Stripe"
+        input_palette_speed:
+          name: "Color Movement"
+          description: "Let the colors of a rainbow, gradient or palette move along the text, in passes per second.\n0 = no movement."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 0.1
         input_enable_background_color:
           name: "Enable Custom Background Color"
           description: "Enable the background color option. Ignored when a background effect is selected."
@@ -188,6 +251,30 @@ blueprint:
           default: false
           selector:
             boolean:
+    section_progress:
+      name: "Progress Bar"
+      icon: mdi:progress-helper
+      description: "Show a progress bar on the bottom row."
+      collapsed: true
+      input:
+        input_progress:
+          name: "Progress"
+          description: "A value between 0 and 100. Also supports templates, for example the state of a sensor.\nLeave empty to hide the progress bar."
+          default: null
+          selector:
+            template:
+        input_progress_color:
+          name: "Progress Color"
+          description: "Color of the filled part of the progress bar."
+          default: [0, 255, 0]
+          selector:
+            color_rgb:
+        input_progress_track_color:
+          name: "Track Color"
+          description: "Color of the unfilled part of the progress bar."
+          default: [32, 32, 32]
+          selector:
+            color_rgb:
     section_effects:
       name: "Effects"
       icon: mdi:animation
@@ -285,6 +372,12 @@ blueprint:
                   value: "remove"
                 - label: "Mark as expired (red border)"
                   value: "mark"
+        input_remove_when_unavailable:
+          name: "Remove app when unavailable"
+          description: "Remove the app from the device when one of the selected entities is unavailable. The app returns on the next update once the entity is available again.\nThe trigger must also fire when the entity becomes unavailable (for example a state trigger without a 'to' state)."
+          default: false
+          selector:
+            boolean:
 mode: single
 
 trigger:
@@ -329,17 +422,28 @@ action:
       var_rainbow: !input input_rainbow
       var_blink_text: !input input_blink_text
       var_fade_text: !input input_fade_text
+      var_scroll_mode: !input input_scroll_mode
+      var_scroll_speed: !input input_scroll_speed
+      var_repeat: !input input_repeat
       var_enable_text_color: !input input_enable_text_color
       var_text_color_1: !input input_text_color_1
       var_text_color_2: !input input_text_color_2
+      var_palette: !input input_palette
+      var_palette_speed: !input input_palette_speed
       var_enable_background_color: !input input_enable_background_color
       var_background_color: !input input_background_color
+      var_progress: !input input_progress
+      var_progress_color: !input input_progress_color
+      var_progress_track_color: !input input_progress_track_color
       var_overlayeffect: !input input_overlayeffect
       var_backgroundeffect: !input input_backgroundeffect
       var_lifetime: !input input_lifetime
       var_lifetime_mode: !input input_lifetimeMode
+      var_remove_when_unavailable: !input input_remove_when_unavailable
       var_topicappname: >-
         {{ states(var_topic) }}/cmd/apps/pushed/{{ (var_appname | string | regex_replace('[^A-Za-z0-9_-]', '_'))[:32] }}
+      var_entities_unavailable: >-
+        {{ (var_text_entities or []) | map('states') | select('eq', 'unavailable') | list | count > 0 }}
       var_lifetime_seconds: >-
         {% if var_lifetime is mapping %}
           {{ (var_lifetime.get('days', 0) * 86400) + (var_lifetime.get('hours', 0) * 3600) + (var_lifetime.get('minutes', 0) * 60) + var_lifetime.get('seconds', 0) }}
@@ -369,6 +473,8 @@ action:
           {%- set p = dict(p, palette='Rainbow', textColor='palette') -%}
         {%- elif var_enable_text_color == '2' -%}
           {%- set p = dict(p, palette=[var_text_color_1, var_text_color_2], textColor='palette') -%}
+        {%- elif var_enable_text_color == '3' and var_palette -%}
+          {%- set p = dict(p, palette=var_palette | string, textColor='palette') -%}
         {%- else -%}
           {%- if var_enable_text_color == '1' -%}
             {%- set p = dict(p, textColor=var_text_color_1) -%}
@@ -380,8 +486,28 @@ action:
             {%- set p = dict(p, textFadeMs=var_fade_text | int) -%}
           {%- endif -%}
         {%- endif -%}
+        {%- if p.get('textColor') == 'palette' and (var_palette_speed | float(0)) > 0 -%}
+          {%- set p = dict(p, paletteSpeed=var_palette_speed | float) -%}
+        {%- endif -%}
+        {%- set scroll = {} -%}
+        {%- if var_scroll_mode -%}
+          {%- set scroll = dict(scroll, mode=var_scroll_mode) -%}
+        {%- endif -%}
+        {%- if (var_scroll_speed | int) > 0 -%}
+          {%- set scroll = dict(scroll, speed=var_scroll_speed | int) -%}
+        {%- endif -%}
+        {%- if scroll -%}
+          {%- set p = dict(p, scroll=scroll) -%}
+        {%- endif -%}
+        {%- if (var_repeat | int) > 0 -%}
+          {%- set p = dict(p, repeat=var_repeat | int) -%}
+        {%- endif -%}
         {%- if var_enable_background_color -%}
           {%- set p = dict(p, backgroundColor=var_background_color) -%}
+        {%- endif -%}
+        {%- set progress = '' if var_progress is none else (var_progress | string | trim) -%}
+        {%- if progress | is_number -%}
+          {%- set p = dict(p, progress=[[progress | float | round(0) | int, 0] | max, 100] | min, progressColor=var_progress_color, progressTrackColor=var_progress_track_color) -%}
         {%- endif -%}
         {%- if var_icon -%}
           {%- set p = dict(p, icon=var_icon | string, iconMode=var_icon_push) -%}
@@ -400,7 +526,17 @@ action:
         {%- endif -%}
         {{ p | to_json }}
 
-  - service: mqtt.publish
-    data:
-      topic: "{{ var_topicappname }}"
-      payload: "{{ payload_data }}"
+  - if:
+      - condition: template
+        value_template: "{{ var_remove_when_unavailable and var_entities_unavailable }}"
+    then:
+      # An empty payload removes the pushed app from the device.
+      - service: mqtt.publish
+        data:
+          topic: "{{ var_topicappname }}"
+          payload: ""
+    else:
+      - service: mqtt.publish
+        data:
+          topic: "{{ var_topicappname }}"
+          payload: "{{ payload_data }}"
