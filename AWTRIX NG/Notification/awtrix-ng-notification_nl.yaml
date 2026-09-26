@@ -249,7 +249,7 @@ blueprint:
     section_progress:
       name: "Voortgangsbalk"
       icon: mdi:progress-helper
-      description: "Toon een voortgangsbalk op de onderste rij. Laat de entiteit en het template leeg om de voortgangsbalk te verbergen."
+      description: "Toon een voortgangsbalk op de onderste rij."
       collapsed: true
       input:
         input_progress_entity:

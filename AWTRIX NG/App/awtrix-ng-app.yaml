@@ -254,7 +254,7 @@ blueprint:
     section_progress:
       name: "Progress Bar"
       icon: mdi:progress-helper
-      description: "Show a progress bar on the bottom row. Leave the entity and the template empty to hide the progress bar."
+      description: "Show a progress bar on the bottom row."
       collapsed: true
       input:
         input_progress_entity:
