@@ -1,0 +1,406 @@
+blueprint:
+  name: "AWTRIX NG App"
+  description: "Publiceer een pushed app naar AWTRIX NG via MQTT."
+  domain: automation
+  author: "MrNick4B"
+  homeassistant:
+    min_version: "2025.7.0"
+  source_url: "https://github.com/MrNick4B/HomeAssistant-Blueprints/blob/main/AWTRIX%20NG/App/awtrix-ng-app_nl.yaml"
+  input:
+    section_general:
+      name: "Basisinstellingen"
+      icon: mdi:cog
+      description: "Stel de basisinstellingen in."
+      input:
+        input_awtrix_device_topic:
+          name: "MQTT-prefix"
+          description: "Kies de MQTT-prefix-entiteit van het gewenste AWTRIX NG-apparaat.\n(Bijvoorbeeld sensor.awtrix_ng_mqtt_prefix)"
+          selector:
+            entity:
+              integration: mqtt
+              domain: sensor
+        input_app_name:
+          name: "Appnaam"
+          description: "Kies een unieke naam voor de app.\nAlleen letters, cijfers, _ en - zijn toegestaan (max. 32 tekens). Andere tekens worden vervangen door _."
+          selector:
+            text:
+        input_duration:
+          name: "Duur"
+          description: "De duur waarin de app wordt weergegeven.\n0 = standaardduur van het apparaat."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 60
+              step: 1
+              unit_of_measurement: "s"
+        input_app_publish_on_boot:
+          name: "Start app bij opstarten"
+          description: "Start de app onmiddellijk wanneer het apparaat opgestart wordt.\nWordt ook getriggerd als de automation aangepast wordt."
+          default: false
+          selector:
+            boolean:
+        input_app_update_trigger:
+          name: "Trigger"
+          description: "Trigger voor het bijwerken van de gegevens in de app."
+          default: null
+          selector:
+            trigger:
+        input_app_update_condition:
+          name: "Conditie"
+          description: "Conditie voor het bijwerken van de gegevens in de app."
+          default: null
+          selector:
+            condition:
+    section_text:
+      name: "Tekst"
+      icon: mdi:card-text
+      description: "Stel de weergegeven tekst in."
+      input:
+        input_text:
+          name: "Tekst"
+          description: "De tekst die weergegeven wordt. Ondersteunt ook templates."
+          default: null
+          selector:
+            template:
+        input_text_entities:
+          name: "Entiteiten"
+          description: "Kies een of meerdere entiteiten waarvan de status weergegeven wordt."
+          default: ""
+          selector:
+            entity:
+              multiple: true
+        input_show_units:
+          name: "Toon eenheden"
+          description: "Kies of de eenheden van de entiteiten weergegeven moeten worden."
+          default: true
+          selector:
+            boolean:
+    section_icon:
+      name: "Pictogram"
+      icon: mdi:image
+      description: "Pas het weergegeven pictogram aan."
+      input:
+        input_icon:
+          name: "Pictogram"
+          description: "Voer de ID of de naam van het pictogram in."
+          default: ""
+          selector:
+            text:
+        input_icon_push:
+          name: "Beweging pictogram"
+          description: "Kies of het pictogram met tekst meebeweegt en hoe vaak dit gebeurt."
+          default: "fixed"
+          selector:
+            select:
+              options:
+                - label: "Blijft staan"
+                  value: "fixed"
+                - label: "Beweegt eenmalig met de tekst mee"
+                  value: "pushOnce"
+                - label: "Beweegt herhaaldelijk met de tekst mee"
+                  value: "push"
+    section_textformatting:
+      name: "Tekstopties"
+      icon: mdi:format-text
+      description: "Instellingen voor de tekstweergave."
+      collapsed: true
+      input:
+        input_text_case:
+          name: "Hoofdlettergebruik"
+          description: "Past de weergave van hoofdletters in de tekst aan."
+          default: "inherit"
+          selector:
+            select:
+              options:
+                - label: "Standaardinstelling van het apparaat"
+                  value: "inherit"
+                - label: "Alleen hoofdletters"
+                  value: "upper"
+                - label: "Zoals ingevoerd"
+                  value: "asTyped"
+        input_blink_text:
+          name: "Knipperende tekst"
+          description: "Laat de tekst knipperen. Werkt niet als het regenboogeffect of een gradient is ingeschakeld."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 5000
+              step: 100
+              unit_of_measurement: "ms"
+        input_fade_text:
+          name: "Vervagingseffect"
+          description: "Laat de tekst knipperen met een vervagingseffect. Gaat voor op knipperende tekst. Werkt niet als het regenboogeffect of een gradient is ingeschakeld."
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 5000
+              step: 100
+              unit_of_measurement: "ms"
+    section_colors:
+      name: "Kleuropties"
+      icon: mdi:palette
+      description: "Pas de tekst- en achtergrondkleuren aan."
+      collapsed: true
+      input:
+        input_enable_text_color:
+          name: "Aangepaste tekstkleur inschakelen"
+          description: "Werkt niet als het regenboogeffect is ingeschakeld."
+          default: "0"
+          selector:
+            select:
+              options:
+                - label: "Geen aangepaste kleur"
+                  value: "0"
+                - label: "Enkele kleur"
+                  value: "1"
+                - label: "Gradient"
+                  value: "2"
+        input_text_color_1:
+          name: "Eerste tekstkleur"
+          description: "Bij een gradient begint de tekst met deze kleur."
+          default: [0, 128, 255]
+          selector:
+            color_rgb:
+        input_text_color_2:
+          name: "Tweede tekstkleur"
+          description: "Bij een gradient eindigt de tekst met deze kleur."
+          default: [255, 0, 128]
+          selector:
+            color_rgb:
+        input_enable_background_color:
+          name: "Aangepaste achtergrondkleur inschakelen"
+          description: "Schakel de optie achtergrondkleur in. Wordt genegeerd als er een achtergrondeffect gekozen is."
+          default: false
+          selector:
+            boolean:
+        input_background_color:
+          name: "Achtergrondkleur"
+          description: "Kies een aangepaste achtergrondkleur."
+          default: [255, 255, 255]
+          selector:
+            color_rgb:
+        input_rainbow:
+          name: "Regenboogeffect"
+          description: "Geeft de tekst een regenboogeffect. Overschrijft aangepaste tekstkleur."
+          default: false
+          selector:
+            boolean:
+    section_effects:
+      name: "Effecten"
+      icon: mdi:animation
+      description: "Beheer overlay- en achtergrondeffecten."
+      collapsed: true
+      input:
+        input_overlayeffect:
+          name: "Overlay-effect"
+          description: "Selecteer een overlayeffect."
+          default: ""
+          selector:
+            select:
+              options:
+                - label: "Standaard van het apparaat (globale overlay)"
+                  value: ""
+                - label: "Sneeuw"
+                  value: "snow"
+                - label: "Regen"
+                  value: "rain"
+                - label: "Motregen"
+                  value: "drizzle"
+                - label: "Storm"
+                  value: "storm"
+                - label: "Onweer"
+                  value: "thunder"
+                - label: "Vorst"
+                  value: "frost"
+        input_backgroundeffect:
+          name: "Achtergrondeffect"
+          description: "Selecteer een achtergrondeffect."
+          default: ""
+          selector:
+            select:
+              options:
+                - label: "Geen effect"
+                  value: ""
+                - label: "Fade"
+                  value: "Fade"
+                - label: "MovingLine"
+                  value: "MovingLine"
+                - label: "BrickBreaker"
+                  value: "BrickBreaker"
+                - label: "PingPong"
+                  value: "PingPong"
+                - label: "Radar"
+                  value: "Radar"
+                - label: "Checkerboard"
+                  value: "Checkerboard"
+                - label: "Fireworks"
+                  value: "Fireworks"
+                - label: "PlasmaCloud"
+                  value: "PlasmaCloud"
+                - label: "Ripple"
+                  value: "Ripple"
+                - label: "Snake"
+                  value: "Snake"
+                - label: "Pacifica"
+                  value: "Pacifica"
+                - label: "TheaterChase"
+                  value: "TheaterChase"
+                - label: "Plasma"
+                  value: "Plasma"
+                - label: "Matrix"
+                  value: "Matrix"
+                - label: "SwirlIn"
+                  value: "SwirlIn"
+                - label: "SwirlOut"
+                  value: "SwirlOut"
+                - label: "LookingEyes"
+                  value: "LookingEyes"
+                - label: "TwinklingStars"
+                  value: "TwinklingStars"
+                - label: "ColorWaves"
+                  value: "ColorWaves"
+    section_advanced:
+      name: "Geavanceerde instellingen"
+      icon: mdi:tune
+      description: "Extra instellingen."
+      collapsed: true
+      input:
+        input_lifetime:
+          name: "Levensduur"
+          description: "Hoe lang het duurt voordat de app verloopt.\n0:00:00 = geen levensduur."
+          default: "0:00:00"
+          selector:
+            duration:
+        input_lifetimeMode:
+          name: "Levensduurmodus"
+          description: "Wat er met de app moet gebeuren als de levensduur bereikt is."
+          default: "remove"
+          selector:
+            select:
+              options:
+                - label: "Verwijder de app"
+                  value: "remove"
+                - label: "Markeer als verlopen (rode rand)"
+                  value: "mark"
+mode: single
+
+trigger:
+  - platform: mqtt
+    topic: "+/availability" # So this seems to not support variables. Further filtering by using conditions.
+    payload: "online"
+    id: awtrix_online
+    enabled: !input input_app_publish_on_boot
+  - triggers: !input input_app_update_trigger
+
+variables:
+  device_topic: !input input_awtrix_device_topic
+
+condition:
+  - condition: or
+    conditions:
+      - condition: and
+        conditions:
+          - condition: trigger
+            id: awtrix_online
+          - condition: template
+            value_template: "{{ trigger.topic == states(device_topic) ~ '/availability' }}"
+      - condition: and
+        conditions:
+          - condition: not
+            conditions:
+              - condition: trigger
+                id: awtrix_online
+          - and: !input input_app_update_condition
+
+action:
+  - variables:
+      var_topic: !input input_awtrix_device_topic
+      var_appname: !input input_app_name
+      var_text: !input input_text
+      var_text_entities: !input input_text_entities
+      var_show_units: !input input_show_units
+      var_text_case: !input input_text_case
+      var_icon: !input input_icon
+      var_icon_push: !input input_icon_push
+      var_duration: !input input_duration
+      var_rainbow: !input input_rainbow
+      var_blink_text: !input input_blink_text
+      var_fade_text: !input input_fade_text
+      var_enable_text_color: !input input_enable_text_color
+      var_text_color_1: !input input_text_color_1
+      var_text_color_2: !input input_text_color_2
+      var_enable_background_color: !input input_enable_background_color
+      var_background_color: !input input_background_color
+      var_overlayeffect: !input input_overlayeffect
+      var_backgroundeffect: !input input_backgroundeffect
+      var_lifetime: !input input_lifetime
+      var_lifetime_mode: !input input_lifetimeMode
+      var_topicappname: >-
+        {{ states(var_topic) }}/cmd/apps/pushed/{{ (var_appname | string | regex_replace('[^A-Za-z0-9_-]', '_'))[:32] }}
+      var_lifetime_seconds: >-
+        {% if var_lifetime is mapping %}
+          {{ (var_lifetime.get('days', 0) * 86400) + (var_lifetime.get('hours', 0) * 3600) + (var_lifetime.get('minutes', 0) * 60) + var_lifetime.get('seconds', 0) }}
+        {% else %}
+          0
+        {% endif %}
+      # Built as a dict and serialized with to_json, so text with quotes stays valid JSON
+      # and booleans are sent as true/false (AWTRIX NG skips keys with the wrong JSON type).
+      payload_data: >-
+        {%- set ns = namespace(result=[]) -%}
+        {%- if var_text_entities -%}
+          {%- for entity in var_text_entities -%}
+            {%- set state = states(entity) -%}
+            {%- set unit = state_attr(entity, "unit_of_measurement") -%}
+            {%- if state not in ['unknown', 'unavailable', 'None'] -%}
+              {%- if var_show_units and unit -%}
+                {%- set ns.result = ns.result + [state ~ unit] -%}
+              {%- else -%}
+                {%- set ns.result = ns.result + [state] -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- set text = '' if var_text is none else (var_text | string | trim) -%}
+        {%- set p = {'text': ([text] + ns.result) | select | join(' '), 'textCase': var_text_case} -%}
+        {%- if var_rainbow -%}
+          {%- set p = dict(p, palette='Rainbow', textColor='palette') -%}
+        {%- elif var_enable_text_color == '2' -%}
+          {%- set p = dict(p, palette=[var_text_color_1, var_text_color_2], textColor='palette') -%}
+        {%- else -%}
+          {%- if var_enable_text_color == '1' -%}
+            {%- set p = dict(p, textColor=var_text_color_1) -%}
+          {%- endif -%}
+          {%- if (var_blink_text | int) > 0 -%}
+            {%- set p = dict(p, textBlinkMs=var_blink_text | int) -%}
+          {%- endif -%}
+          {%- if (var_fade_text | int) > 0 -%}
+            {%- set p = dict(p, textFadeMs=var_fade_text | int) -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if var_enable_background_color -%}
+          {%- set p = dict(p, backgroundColor=var_background_color) -%}
+        {%- endif -%}
+        {%- if var_icon -%}
+          {%- set p = dict(p, icon=var_icon | string, iconMode=var_icon_push) -%}
+        {%- endif -%}
+        {%- if (var_duration | int) > 0 -%}
+          {%- set p = dict(p, durationMs=(var_duration | int) * 1000) -%}
+        {%- endif -%}
+        {%- if var_overlayeffect -%}
+          {%- set p = dict(p, overlay=var_overlayeffect) -%}
+        {%- endif -%}
+        {%- if var_backgroundeffect -%}
+          {%- set p = dict(p, effect=var_backgroundeffect) -%}
+        {%- endif -%}
+        {%- if (var_lifetime_seconds | int) > 0 -%}
+          {%- set p = dict(p, lifetimeMs=(var_lifetime_seconds | int) * 1000, lifetimeExpiry=var_lifetime_mode) -%}
+        {%- endif -%}
+        {{ p | to_json }}
+
+  - service: mqtt.publish
+    data:
+      topic: "{{ var_topicappname }}"
+      payload: "{{ payload_data }}"
