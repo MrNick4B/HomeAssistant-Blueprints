@@ -400,11 +400,14 @@ blueprint:
                   value: "mark"
         input_remove_when_unavailable:
           name: "Verwijder app bij onbeschikbaarheid"
-          description: "Verwijder de app van het apparaat als een van de gekozen entiteiten onbeschikbaar (unavailable) is. De app komt terug bij de volgende update zodra de entiteit weer beschikbaar is.\nDe trigger moet ook afgaan als de entiteit onbeschikbaar wordt (bijvoorbeeld een statustrigger zonder 'naar'-status)."
+          description: "Verwijder de app van het apparaat als een van de gekozen entiteiten onbeschikbaar (unavailable) is. De app komt terug zodra alle entiteiten weer beschikbaar zijn."
           default: false
           selector:
             boolean:
 mode: single
+
+trigger_variables:
+  var_trigger_entities: !input input_text_entities
 
 trigger:
   - platform: mqtt
@@ -412,11 +415,21 @@ trigger:
     payload: "online"
     id: awtrix_online
     enabled: !input input_app_publish_on_boot
+  # Template triggers instead of state triggers, because a state trigger is invalid without entities.
+  - platform: template
+    value_template: "{{ (var_trigger_entities or []) | map('states') | select('eq', 'unavailable') | list | count > 0 }}"
+    id: awtrix_entities_unavailable
+    enabled: !input input_remove_when_unavailable
+  - platform: template
+    value_template: "{{ (var_trigger_entities or []) | map('states') | select('eq', 'unavailable') | list | count == 0 }}"
+    id: awtrix_entities_available
+    enabled: !input input_remove_when_unavailable
   - triggers: !input input_app_update_trigger
 
 variables:
   device_topic: !input input_awtrix_device_topic
 
+# Removing the app bypasses the user condition; bringing it back is a regular update.
 condition:
   - condition: or
     conditions:
@@ -426,12 +439,16 @@ condition:
             id: awtrix_online
           - condition: template
             value_template: "{{ trigger.topic == states(device_topic) ~ '/availability' }}"
+      - condition: trigger
+        id: awtrix_entities_unavailable
       - condition: and
         conditions:
           - condition: not
             conditions:
               - condition: trigger
-                id: awtrix_online
+                id:
+                  - awtrix_online
+                  - awtrix_entities_unavailable
           - and: !input input_app_update_condition
 
 action:
