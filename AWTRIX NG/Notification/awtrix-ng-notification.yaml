@@ -261,13 +261,13 @@ blueprint:
         input_progress_color:
           name: "Progress Color"
           description: "Color of the filled part of the progress bar."
-          default: [0, 255, 0]
+          default: [255, 255, 255]
           selector:
             color_rgb:
         input_progress_track_color:
           name: "Track Color"
           description: "Color of the unfilled part of the progress bar."
-          default: [32, 32, 32]
+          default: [96, 96, 96]
           selector:
             color_rgb:
     section_effects:
