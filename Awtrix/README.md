@@ -4,6 +4,12 @@ Feel free to use them in your Home Assistant instance!
 
 Requires Home Assistant 2025.7.0 (previously 2024.6.0) or later because of a change in the entity selector behavior.
 
+> [!WARNING]
+> **These blueprints are no longer maintained.**
+> With the introduction of [Awtrix NG blueprints](AWTRIX%20NG), I have stopped developing these blueprints.
+> They will remain available and may still work, but they will likely not receive updates, bug fixes, or support.
+> I recommend switching to Awtrix NG for new setups.
+
 ### App Blueprint
 Publish an app to Awtrix 3 via MQTT.
 
